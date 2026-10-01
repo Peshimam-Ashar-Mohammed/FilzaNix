@@ -29,6 +29,8 @@ Rather than simply wrapping Windows commands, the project focuses on implementin
 - `echo` — Print text to the terminal
 - `exit` — Terminate the environment
 - Initial virtual filesystem structure
+- `touch` — Create files inside the virtual filesystem
+- `cat` — Read file contents
 
 ### Planned Features
 

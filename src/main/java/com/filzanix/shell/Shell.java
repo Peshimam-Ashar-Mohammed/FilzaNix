@@ -27,7 +27,7 @@ public class Shell {
 
         while (scanner.hasNextLine()) {
 
-            System.out.print(PURPLE + "filzanix:~$ " + RESET);
+            System.out.print(PURPLE + "filzanix:" +fileSystem.getCurrentPath() + "$ " + RESET);
 
             String input = scanner.nextLine().trim();
 
@@ -53,11 +53,37 @@ public class Shell {
                 System.out.println(YELLOW + "  exit" + WHITE + " - Exit the program" + RESET);
                 System.out.println(YELLOW + "  pwd" + WHITE + " - Print the current working directory" + RESET);
                 System.out.println(YELLOW + "  ls" + WHITE + " - List files in the current working directory" + RESET);
+                System.out.println(YELLOW + "  mkdir" + WHITE + " - Create a new directory" + RESET);
+                System.out.println(YELLOW + "  cd" + WHITE + " - Change the current working directory" + RESET);
+                System.out.println(YELLOW + "  touch" + WHITE + " - Create a new file" + RESET);
+                System.out.println(YELLOW + "  cat" + WHITE + " - Display the contents of a file" + RESET);
+                System.out.println(YELLOW + "  rm <file>" + WHITE + " - Remove a file" + RESET);
+                System.out.println(YELLOW + "  rmdir <directory>" + WHITE + " - Remove an empty directory" + RESET);
 
             } else if (command.equalsIgnoreCase("echo")) {
 
-                System.out.println(arguments);
+                boolean append = false;
 
+                if (arguments.contains(">>")) {
+
+                    String[] writeParts = arguments.split(">>", 2);
+                    String content = writeParts[0].trim();
+                    String filename = writeParts[1].trim();
+
+                    fileSystem.writeFile(filename, content, true);
+
+                } else if (arguments.contains(">")) {
+
+                    String[] writeParts = arguments.split(">", 2);
+                    String content = writeParts[0].trim();
+                    String filename = writeParts[1].trim();
+
+                    fileSystem.writeFile(filename, content, false);
+
+                } else {
+
+                    System.out.println(arguments);
+                }
             } else if (command.equalsIgnoreCase("exit")) {
 
                 System.out.println(YELLOW + "Shutting down FilzaNix..." + RESET);
@@ -71,7 +97,70 @@ public class Shell {
 
                 fileSystem.listFiles();
             
-            }
+            } else if (command.equalsIgnoreCase("mkdir")) {
+
+                if (arguments.isEmpty()) {
+
+                    System.out.println("Usage: mkdir <directory>");
+
+                } else {
+
+                    fileSystem.makeDirectory(arguments);
+
+                }
+
+            } else if (command.equalsIgnoreCase("cd")) {
+
+                if (arguments.isEmpty()) {
+
+                    fileSystem.changeDirectory("/home");
+
+                } else {
+
+                    fileSystem.changeDirectory(arguments);
+
+                }
+
+            } else if (command.equalsIgnoreCase("touch")) {
+
+                if (arguments.isEmpty()) {
+
+                    System.out.println("Usage: touch <filename>");
+
+                } else {
+
+                    fileSystem.createFile(arguments);
+
+                }
+
+            } else if (command.equalsIgnoreCase("cat")) {
+
+                if (arguments.isEmpty()) {
+
+                    System.out.println("Usage: cat <filename>");
+
+                } else {
+
+                    fileSystem.readFile(arguments);
+
+                }
+
+        } else if (command.equalsIgnoreCase("rm")) {
+   
+            if (arguments.isBlank()) 
+                System.out.println("Usage: rm <filename>");
+            else 
+                fileSystem.removeFile(arguments.trim());
+
+        }
+        else if (command.equalsIgnoreCase("rmdir")) {
+            
+            if (arguments.isBlank())
+                System.out.println("Usage: rmdir <directory>");
+            else
+                fileSystem.removeDirectory(arguments.trim());
+            
+        }
             else {
 
                 System.out.println(RED + "Command not found: " + command + RESET);
