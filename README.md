@@ -8,7 +8,7 @@ Inspired by Linux shells and virtual operating systems, FilzaNix provides its ow
 
 The project is built as an educational systems-programming project to explore how command-line interfaces, shell interpreters, filesystem operations, terminal input, and system abstractions work internally.
 
-> **Status:** Early Development — v0.1
+> **Status:** Active Development — Networking Utilities Implemented
 
 ---
 
@@ -48,23 +48,53 @@ The long-term goal is to build a small, understandable environment where operati
 - Linux-inspired command structure
 - Basic filesystem path protection and normalization
 
-### Available Commands
+### Networking Utilities
+
+- Network interface and IP address information
+- DNS hostname resolution
+- Host connectivity testing
+- HTTP requests using Java HttpClient
+- Routing table inspection
+- Network connection inspection
+- Traceroute and Windows tracert support
+- TCP common-port scanner
+- Port state classification
+- Conventional service-name identification
+- Scan duration and statistics
+- Hostname and IP address targets
 
 | Command | Description |
 |---|---|
 | `help` | Display available commands |
-| `echo <text>` | Print text to the terminal |
+| `echo <text>` | Print text |
 | `echo <text> > <file>` | Write text to a file |
 | `echo <text> >> <file>` | Append text to a file |
-| `pwd` | Display the current working directory |
+| `pwd` | Display current working directory |
 | `ls` | List files and directories |
 | `mkdir <directory>` | Create a directory |
-| `cd <directory>` | Change the current directory |
+| `cd <directory>` | Change directory |
 | `touch <file>` | Create a file |
 | `cat <file>` | Display file contents |
 | `rm <file>` | Remove a file |
 | `rmdir <directory>` | Remove an empty directory |
-| `history` | Display previously executed commands |
+| `history` | Display command history |
+| `date` | Display date and time |
+| `whoami` | Display current user |
+| `uname` | Display operating system information |
+| `uname -a` | Display extended system information |
+| `arch` | Display system architecture |
+| `hostname` | Display hostname |
+| `sysinfo` | Display JVM memory information |
+| `ip` | Display network information |
+| `ip addr` | Display network interfaces |
+| `ip route` | Display routing table |
+| `nslookup <host>` | Resolve hostname |
+| `ping <host>` | Test host connectivity |
+| `curl <url>` | Send HTTP request |
+| `netstat` | Display network connections |
+| `traceroute <host>` | Trace network route |
+| `tracert <host>` | Windows traceroute alias |
+| `portscan <host>` | Scan common TCP ports |
 | `exit` | Shut down FilzaNix |
 
 ---
@@ -126,7 +156,9 @@ FilzaNix/
 │                   │   └── Shell.java
 │                   │
 │                   └── filesystem/
-│                       └── VirtualFileSystem.java
+│                   |   └── VirtualFileSystem.java
+|                   ├── commands/
+│                   └── NetworkCommand.java
 │
 ├── env/
 │   ├── home/
@@ -476,6 +508,41 @@ Hello
 FilzaNix
 ```
 
+# Networking
+
+FilzaNix includes networking utilities implemented using Java networking APIs
+and selected native operating-system tools.
+
+### DNS Lookup
+
+```text
+filzanix:/home$ nslookup github.com
+
+HTTP Request
+filzanix:/home$ curl https://example.com
+
+
+Connectivity Test
+filzanix:/home$ ping github.com
+
+
+Route Inspection
+filzanix:/home$ traceroute github.com
+
+
+TCP Port Scanner
+filzanix:/home$ portscan localhost
+
+
+The port scanner checks a predefined collection of common TCP ports and
+reports connection outcomes and conventional service names.
+Use port scanning only on systems you own or are authorized to test.
+
+---
+
+
+
+
 ---
 
 # Architecture
@@ -488,11 +555,18 @@ Main
  ▼
 Shell
  │
- ├── Terminal Input
- ├── JLine Integration
- ├── Command History
  ├── Command Parsing
- └── Command Dispatch
+ ├── Command Dispatch
+ │
+ ├── NetworkCommand
+ │    ├── DNS Resolution
+ │    ├── HTTP Requests
+ │    ├── Connectivity Tests
+ │    ├── Route Inspection
+ │    ├── Network Statistics
+ │    └── TCP Port Scanner
+ │
+ └── VirtualFileSystem
  │
  ▼
 VirtualFileSystem
@@ -588,6 +662,11 @@ It currently does not provide:
 - Real Linux users
 - Kernel-level permissions
 - Native Linux command execution
+```markdown
+- Networking utilities are not a replacement for Nmap.
+- Port scanning currently uses a predefined set of common TCP ports.
+- Service names are inferred from conventional port assignments.
+- Network route and connection information may depend on native OS utilities.
 
 The filesystem and system behavior are simulations implemented in Java.
 

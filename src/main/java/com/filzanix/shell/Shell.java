@@ -126,7 +126,13 @@ public class Shell {
                     {"ip", "Show network interfaces and IP addresses"},
                     {"ip addr", "Show network interfaces and IP addresses"},
                     {"ping <host>", "Test network reachability"},
-                    {"nslookup <domain>", "Resolve domain names using DNS"}
+                    {"nslookup <domain>", "Resolve domain names using DNS"},
+                    {"curl <URL>", "Make an HTTP GET request"},
+                    {"ip route", "Display the routing table"},
+                    {"netstat", "Display network connections and ports"},
+                    {"traceroute <host>", "Trace the route to a host"},
+                    {"tracert <host>", "Trace the route to a host (Windows)"},
+                    {"portscan <host>", "Scan ports on a host"}
                 });
                 printHelpSection("OTHER COMMANDS", new String[][] {
                     {"help", "Show this help message"},
