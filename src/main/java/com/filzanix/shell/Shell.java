@@ -23,6 +23,8 @@ import java.time.LocalTime;
 import java.lang.management.ManagementFactory;
 import java.time.Duration;
 
+import com.filzanix.commands.NetworkCommand;
+
 public class Shell {
 
     private static final String RESET = "\u001B[0m";
@@ -93,27 +95,38 @@ public class Shell {
 
             if (command.equalsIgnoreCase("help")) {
 
-                System.out.println(WHITE + "Available commands:" + RESET);
-                System.out.println(YELLOW + "  help" + WHITE + " - Show this help message" + RESET);
-                System.out.println(YELLOW + "  echo" + WHITE + " - Print text to the terminal" + RESET);
-                System.out.println(YELLOW + "  exit" + WHITE + " - Exit the program" + RESET);
-                System.out.println(YELLOW + "  pwd" + WHITE + " - Print the current working directory" + RESET);
-                System.out.println(YELLOW + "  ls" + WHITE + " - List files in the current working directory" + RESET);
-                System.out.println(YELLOW + "  mkdir" + WHITE + " - Create a new directory" + RESET);
-                System.out.println(YELLOW + "  cd" + WHITE + " - Change the current working directory" + RESET);
-                System.out.println(YELLOW + "  touch" + WHITE + " - Create a new file" + RESET);
-                System.out.println(YELLOW + "  cat" + WHITE + " - Display the contents of a file" + RESET);
-                System.out.println(YELLOW + "  rm <file>" + WHITE + " - Remove a file" + RESET);
-                System.out.println(YELLOW + "  rmdir <directory>" + WHITE + " - Remove an empty directory" + RESET);
-                System.out.println(YELLOW + "  history" + WHITE + " - Show command history" + RESET);
-                System.out.println(YELLOW + "  date" + WHITE + " - Show the current date and time" + RESET);
-                System.out.println(YELLOW + "  time" + WHITE + " - Show the current time" + RESET);
-                System.out.println(YELLOW + "  whoami" + WHITE + " - Show the current user" + RESET);
-                System.out.println(YELLOW + "  uname" + WHITE + " - Show the operating system name" + RESET);
-                System.out.println(YELLOW + "  uname -a" + WHITE + " - Show the operating system name, version, architecture, and user" + RESET);
-                System.out.println(YELLOW + "  arch" + WHITE + " - Show the system architecture" + RESET);
-                System.out.println(YELLOW + "  hostname" + WHITE + " - Show the system hostname" + RESET);
-                System.out.println(YELLOW + "  sysinfo" + WHITE + " - Show system information" + RESET);
+                System.out.println(WHITE + "Available commands" + RESET);
+                printHelpSection("SYSTEM COMMANDS", new String[][] {
+                    {"date", "Show the current date and time"},
+                    {"time", "Show the current time"},
+                    {"whoami", "Show the current user"},
+                    {"hostname", "Show the system hostname"},
+                    {"uname", "Show the operating system name"},
+                    {"uname -a", "Show OS, version, architecture, and user"},
+                    {"arch", "Show the system architecture"},
+                    {"sysinfo", "Show system information"}
+                });
+                printHelpSection("FILE COMMANDS", new String[][] {
+                    {"pwd", "Print the current working directory"},
+                    {"ls", "List files in the current directory"},
+                    {"cd <directory>", "Change the current directory"},
+                    {"mkdir <directory>", "Create a directory"},
+                    {"touch <file>", "Create a file"},
+                    {"cat <file>", "Display file contents"},
+                    {"rm <file>", "Remove a file"},
+                    {"rmdir <directory>", "Remove an empty directory"},
+                    {"echo <text> > <file>", "Write text to a file"},
+                    {"echo <text> >> <file>", "Append text to a file"}
+                });
+                printHelpSection("NETWORK COMMANDS", new String[][] {
+                    {"ip", "Show network interfaces and IP addresses"},
+                    {"ip addr", "Show network interfaces and IP addresses"}
+                });
+                printHelpSection("OTHER COMMANDS", new String[][] {
+                    {"help", "Show this help message"},
+                    {"history", "Show command history"},
+                    {"exit", "Exit FilzaNix"}
+                });
 
             } else if (command.equalsIgnoreCase("echo")) {
 
@@ -248,18 +261,16 @@ public class Shell {
             System.out.println(System.getProperty("user.name"));
             continue;
     
-        } else if (command.equals("uname")) {
-            System.out.println(System.getProperty("os.name"));
-            continue;
-        }
-
-        else if (command.equals("uname -a")) {
+        } else if (command.equals("uname") && arguments.equals("-a")) {
             System.out.println(
                     System.getProperty("os.name") + " " +
                     System.getProperty("os.version") + " " +
                     System.getProperty("os.arch") + " " +
                     System.getProperty("user.name")
             );
+            continue;
+        } else if (command.equals("uname")) {
+            System.out.println(System.getProperty("os.name"));
             continue;
         } else if (command.equals("arch")) {
 
@@ -306,6 +317,9 @@ public class Shell {
             System.out.println("========================================");
 
             continue;
+
+        } else if (NetworkCommand.execute(command, arguments)) {
+            continue;
         }
             else {
 
@@ -315,5 +329,14 @@ public class Shell {
         }
 
         terminal.close();
+    }
+
+    private void printHelpSection(String title, String[][] commands) {
+        System.out.println();
+        System.out.println(YELLOW + title + RESET);
+
+        for (String[] entry : commands) {
+            System.out.printf("  %-24s %s%n", entry[0], entry[1]);
+        }
     }
 }

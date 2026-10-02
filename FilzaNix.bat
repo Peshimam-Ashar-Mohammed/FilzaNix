@@ -8,18 +8,17 @@ cls
 
 if not exist out mkdir out
 
-javac -encoding UTF-8 -cp "lib/*" -d out ^
-src\main\java\com\filzanix\Main.java ^
-src\main\java\com\filzanix\shell\Shell.java ^
-src\main\java\com\filzanix\filesystem\VirtualFileSystem.java
+dir /s /b src\main\java\*.java > sources.txt
+
+javac -encoding UTF-8 -cp "lib/*" -d out @sources.txt
 
 if errorlevel 1 (
-    color 0C
-    echo.
-    echo [ERROR] Compilation failed.
+    echo Compilation failed!
     pause
     exit /b 1
 )
+
+del sources.txt
 
 java -cp "out;lib/*" com.filzanix.Main
 
