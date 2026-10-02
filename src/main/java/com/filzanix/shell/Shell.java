@@ -25,6 +25,10 @@ import java.time.Duration;
 
 import com.filzanix.commands.NetworkCommand;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.io.IOException;
+
 public class Shell {
 
     private static final String RESET = "\u001B[0m";
@@ -120,7 +124,9 @@ public class Shell {
                 });
                 printHelpSection("NETWORK COMMANDS", new String[][] {
                     {"ip", "Show network interfaces and IP addresses"},
-                    {"ip addr", "Show network interfaces and IP addresses"}
+                    {"ip addr", "Show network interfaces and IP addresses"},
+                    {"ping <host>", "Test network reachability"},
+                    {"nslookup <domain>", "Resolve domain names using DNS"}
                 });
                 printHelpSection("OTHER COMMANDS", new String[][] {
                     {"help", "Show this help message"},
@@ -320,7 +326,8 @@ public class Shell {
 
         } else if (NetworkCommand.execute(command, arguments)) {
             continue;
-        }
+        
+        } 
             else {
 
                 System.out.println(RED + "Command not found: " + command + RESET);
