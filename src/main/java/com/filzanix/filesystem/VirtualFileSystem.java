@@ -11,6 +11,9 @@ public class VirtualFileSystem {
     private final Path root;
     private Path currentDirectory;
 
+    private static final String BLUE = "\u001B[34m";
+    private static final String RESET = "\u001B[0m";
+
     public VirtualFileSystem() throws IOException {
 
         this.root = Paths.get("env").toAbsolutePath().normalize();
@@ -34,9 +37,21 @@ public class VirtualFileSystem {
 
         try (var files = Files.list(currentDirectory)) {
 
-            files.forEach(path -> System.out.println(
-                    path.getFileName()
-            ));
+            files.forEach(path -> {
+
+                String name = path.getFileName().toString();
+
+                if (Files.isDirectory(path)) {
+
+                    System.out.println(BLUE + name + "/" + RESET);
+
+                } else {
+
+                    System.out.println(name);
+
+                }
+
+            });
         }
     }
 

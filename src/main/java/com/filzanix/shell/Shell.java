@@ -1,8 +1,20 @@
 package com.filzanix.shell;
 
 import com.filzanix.filesystem.VirtualFileSystem;
-import java.io.IOException;
+
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.UserInterruptException;
+
+import java.io.IOException;
 
 public class Shell {
 
@@ -12,28 +24,55 @@ public class Shell {
     private static final String YELLOW = "\u001B[93m";
     private static final String RED = "\u001B[91m";
 
-    private final Scanner scanner;
+    private final Terminal terminal;
+    private final LineReader lineReader;
 
+    private final List<String> commandHistory = new ArrayList<>();
     private final VirtualFileSystem fileSystem;
 
     public Shell() throws IOException {
 
-        this.scanner = new Scanner(System.in);
+        this.terminal = TerminalBuilder.builder()
+                .system(true)
+                .build();
+
+        this.lineReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .build();
+
         this.fileSystem = new VirtualFileSystem();
 
     }
 
     public void start() throws IOException{
 
-        while (scanner.hasNextLine()) {
+        while (true) {
 
-            System.out.print(PURPLE + "filzanix:" +fileSystem.getCurrentPath() + "$ " + RESET);
+            String prompt = PURPLE + "filzanix:"
+                    + fileSystem.getCurrentPath() + "$ " + RESET;
 
-            String input = scanner.nextLine().trim();
+            String input;
+
+            try {
+
+                input = lineReader.readLine(prompt).trim();
+
+            } catch (UserInterruptException e) {
+
+                System.out.println();
+                continue;
+
+            } catch (EndOfFileException e) {
+
+                break;
+
+            }
 
             if (input.isEmpty()) {
                 continue;
             }
+
+            commandHistory.add(input);
 
             String[] parts = input.split("\\s+", 2);
 
@@ -59,6 +98,7 @@ public class Shell {
                 System.out.println(YELLOW + "  cat" + WHITE + " - Display the contents of a file" + RESET);
                 System.out.println(YELLOW + "  rm <file>" + WHITE + " - Remove a file" + RESET);
                 System.out.println(YELLOW + "  rmdir <directory>" + WHITE + " - Remove an empty directory" + RESET);
+                System.out.println(YELLOW + "  history" + WHITE + " - Show command history" + RESET);
 
             } else if (command.equalsIgnoreCase("echo")) {
 
@@ -160,6 +200,16 @@ public class Shell {
             else
                 fileSystem.removeDirectory(arguments.trim());
             
+        } else if (command.equalsIgnoreCase("history")) {
+
+            for (int i = 0; i < commandHistory.size(); i++) {
+
+                System.out.println(
+                        (i + 1) + "  " + commandHistory.get(i)
+                );
+
+            }
+
         }
             else {
 
@@ -168,6 +218,6 @@ public class Shell {
             }
         }
 
-        scanner.close();
+        terminal.close();
     }
 }

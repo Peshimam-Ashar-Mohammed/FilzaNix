@@ -8,7 +8,7 @@ cls
 
 if not exist out mkdir out
 
-javac -encoding UTF-8 -d out ^
+javac -encoding UTF-8 -cp "lib/*" -d out ^
 src\main\java\com\filzanix\Main.java ^
 src\main\java\com\filzanix\shell\Shell.java ^
 src\main\java\com\filzanix\filesystem\VirtualFileSystem.java
@@ -21,7 +21,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-java -cp out com.filzanix.Main
+java -cp "out;lib/*" com.filzanix.Main
 
 echo.
 pause
